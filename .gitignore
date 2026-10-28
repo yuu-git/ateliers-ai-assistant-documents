@@ -1,0 +1,17 @@
+# Local editor and OS metadata
+.vs/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Credentials and local diagnostics
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.dmp
+*.log
