@@ -3,10 +3,10 @@
 ## 対象リポジトリ
 
 アプリケーション:
-`C:\Projects\OnlineRepos\yuu-git\ateliers-ai-assistant`
+`yuu-git\ateliers-ai-assistant`
 
 設計ドキュメント:
-`C:\Projects\OnlineRepos\yuu-git\ateliers-ai-assistant-documents`
+`yuu-git\ateliers-ai-assistant-documents`
 
 ## 作業開始前の確認
 
