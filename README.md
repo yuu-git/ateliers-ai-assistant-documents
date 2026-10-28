@@ -23,6 +23,8 @@ Windows 上で動作する、自分専用のローカル AI アシスタント�
 - [音声・動画生成連携](features/media-integration.md)
 - [AI 管理コンソール構想（未実装・時期未定）](features/ai-management-console-concept.md)
 - [データとメッセージの設計](data-design.md)
+- [アプリケーションデータ保存方針](data-storage-policy.md)
+- [Phase 2 実装指示と確認済み補足](phase2-codex-implementation-instructions.md)
 - [開発ロードマップと完了条件](roadmap.md)
 - [開発・テスト方針](development-guidelines.md)
 - [未決定事項と技術検証](open-questions.md)

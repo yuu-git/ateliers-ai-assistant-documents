@@ -32,6 +32,8 @@ ateliers-dev/
 
 上記は構成案。初期段階は Core / Application / Infrastructure / Desktop とテストを中心にし、空の Feature プロジェクトや Host を先に量産しない。
 
+Phase 2 は既存4プロジェクト内に会話保存・設定・パス・診断ログを配置する。EF Core Migration は `src/Ateliers.Ai.Assistant.Infrastructure/Conversations/Migrations/`、ローカルの EF ツール定義はルートの `dotnet-tools.json` に置く。保存先はソース・実行ファイルの配下ではなく [保存方針](data-storage-policy.md) のユーザーデータ領域とし、DB・ログ・設定の実データは Git に含めない。
+
 [AI 管理コンソール構想](features/ai-management-console-concept.md) の追加は文書上の記録に留める。専用プロジェクト・MCP ホスト・オーケストレーター基盤は今は作成しない。着手時に既存の Desktop / Application / Infrastructure の責務へ配置できるかを検討し、具体的な必要性がある場合だけ分割する。
 
 ## 文書管理

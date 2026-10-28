@@ -9,7 +9,7 @@ title: アーキテクチャ
 - **UI**: WinUI 3 + XAML + MVVM（決定）。Blazor は将来必要になれば別 UI として追加可能。
 - **常駐**: .NET Worker Service を Windows Service として運用（情報収集の段階で導入）。
 - **プロセス間通信**: localhost HTTP API、必要なら SignalR（候補）。
-- **保存**: SQLite + EF Core（採用候補として強い）。Markdown はファイルとして保存。
+- **保存**: Phase 2 の保存済み会話は SQLite + EF Core。Markdown 原文・表示状態・下書きと画像 BLOB を保存する。将来の情報収集結果の Markdown ファイル出力は別責務とする。
 - **AI**: Ollama と既存 C# 通信コード。Vision 対応モデルは画面監視段階で検証。
 - **開発環境**: Aspire は必須としない。複数プロセスの開発時起動・観測が必要になれば検討。
 
@@ -46,6 +46,12 @@ Windows Service は非対話セッションで動くため、デスクトップ�
 依存方向は Domain ← Application ← ホスト／アダプターを基本とする。Infrastructure は Application が定義する契約を実装し、Host で DI 接続する。Desktop と Worker は互いの ViewModel や実装クラスを直接参照しない。
 
 Phase 1 のモデル管理では、Application の `ChatModelSession` がチャットのポートを包み、管理対象の追跡・排他・期限付き終了を担当する。Infrastructure は `IModelControlService` を実装する。これは単一チャット用であり、将来の複数機能による共有モデルの参照数管理は導入していない。詳細は [モデル管理](features/model-management.md) を参照。
+
+Phase 2 の永続化は Application の `IConversationStore`、`IUserSettingsStore`、`IApplicationPaths`、`IAppDiagnostics` を境界とし、Infrastructure が SQLite / JSON / 固定パス / ローテーションログを実装する。Desktop の ViewModel は DB・ファイル・Explorer を直接扱わない。SQLite I/O は背景処理で直列化し、会話全体をトランザクションで置き換える。保存先とユーザー単位の所有範囲は [保存方針](data-storage-policy.md) に従う。
+
+`AppDataPaths` は通常、Infrastructure のビルド構成から `AppDataEnvironment` を決定する。ホストと依存プロジェクトは同じ Debug / Release 構成でビルドする。Roaming / Local ともに Debug は `Ai-Assistant.Debug`、Release は既存の `Ai-Assistant` を使う。環境の表示情報も同じ `IApplicationPaths` から取得し、UI と保存処理の判断を重複させない。
+
+終了時は、生成の中止待ちと未保存内容の確認・保存を先に完了する。キャンセル時はウィンドウとメモリ内容を維持し、その後にだけ既存の期限付きモデル解放と終了を行う。EF Core のリフレクション・Migration を保持するため、Phase 2 の Release は trimming を無効にする。
 
 ## 共通処理と固有処理
 

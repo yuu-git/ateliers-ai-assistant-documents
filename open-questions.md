@@ -10,7 +10,7 @@ title: 未決定事項と技術検証
 
 - .NET / Windows App SDK / WinUI 3 の具体的なバージョンと Visual Studio 環境。
 - 将来のコンテキスト管理（モデルごとの上限取得、トークン計算、切り詰め UI）。Phase 1 ではアプリ側で切り詰めないことで合意済み。
-- Phase 2 の設定保存方式。Phase 1 は設定・会話を保存せず、SQLite は導入しない。
+- Phase 2 以降に追加する設定項目。現行設定は最後の選択モデルに限定し、保存方式・場所は採用済み方針に従う。
 - `Core` と `Application` の責務境界、最小 csproj 数。
 
 ## Phase 1 で確認済み
@@ -18,6 +18,15 @@ title: 未決定事項と技術検証
 - 既存の `ateliers-learn-llm/src/Ateliers.Learn.LLM/Program.cs` を再利用し、`HttpClient` でモデル一覧取得・NDJSON ストリーミングを実装する。
 - 接続先、モデル選択、システム指示、会話継続、中止・失敗したターンの履歴除外、モデル変更時の扱いは [AI チャットの決定事項](features/ai-chat.md#phase-1-の決定事項) を参照する。
 - 既存の Core / Application / Infrastructure / Desktop と .NET 8 ターゲット、Windows App SDK 2.6.4 を維持する。Windows App Runtime 2.6.4 は開発環境へ導入済み。
+
+## Phase 2 で確認済み
+
+- 保存先は [データ保存方針](data-storage-policy.md) に固定する。設定は Roaming JSON、明示保存済み会話と画像 BLOB は Local SQLite、ログは Local に保存する。任意パス設定は実装しない。
+- 中止・失敗状態も復元するが、次回要求からは除外する。未送信の入力と画像も保存する。
+- 保存済み会話の応答は完了・中止・失敗時、下書き変更は遅延集約して自動保存する。新規会話は明示保存までメモリ内のみ。
+- 最後のモデル選択を Roaming 設定で復元し、自動ロードしない。Release trimming は EF Core 利用に伴い無効とする。
+- Debug のデータは `Ai-Assistant.Debug`、Release は従来の `Ai-Assistant` に分離する。既存データは Release 用に維持し、自動移行・共有は行わない。ビルド構成で自動決定して設定画面に表示する。
+- バックアップ UI、保存期間の自動管理、画像の別ファイル化、サービス用データの所有場所は引き続き後続で検討する。
 
 ## 常駐・通信
 
