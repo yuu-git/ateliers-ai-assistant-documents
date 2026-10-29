@@ -20,6 +20,8 @@ Windows 上で動作する、自分専用のローカル AI アシスタント�
 - [チャットへの画像貼り付け](features/image-paste.md)
 - [Web 情報収集](features/web-monitoring.md)
 - [Web 情報収集の実装状況と制約](features/web-monitoring-implementation-status.md)
+- [通知管理・既読・ブックマーク・タグ・グローバル操作](features/notification-management-implementation-status.md)
+- [通知一覧のクイック操作・単体削除と確認設定](features/notification-quick-actions-implementation-status.md)
 - [画面監視・ゲームアシスタント](features/screen-monitoring.md)
 - [音声・動画生成連携](features/media-integration.md)
 - [AI 管理コンソール構想（未実装・時期未定）](features/ai-management-console-concept.md)
@@ -32,6 +34,8 @@ Windows 上で動作する、自分専用のローカル AI アシスタント�
 - [未決定事項と技術検証](open-questions.md)
 
 ## 文書の読み方
+
+Phase 4 の現在の動作、起動登録、API・ログ・モデル利用の方針と確認手順は [常駐 Worker の実装・運用](features/background-worker.md) を参照する。[Phase 4 実装指示](ai-implementation/phase4-codex-implementation-instructions.md) からの確定事項も記録している。
 
 「決定」は現在の採用方針、「候補」は実装前に比較する選択肢、「将来構想」は実装を約束しない拡張案を示す。サンプルのクラス名・ディレクトリ名は設計案であり、固定 API ではない。
 

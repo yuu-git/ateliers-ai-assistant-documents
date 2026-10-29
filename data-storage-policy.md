@@ -1,8 +1,12 @@
 # Ateliers AI Assistant — アプリケーションデータ保存方針
 
-- ステータス: Phase 2 に向けた採用方針
-- 対象: Windows デスクトップアプリケーション（WinUI 3）
+**通知クイック操作の追記:** 単体記事削除の確認設定 `ConfirmSingleArticleDeletion` は既存の Roaming `settings.json` に保存する（既定 true、旧 JSON も true）。Debug/Release 分離は維持する。削除成功後にのみ省略設定を確定し、一括削除の確認には適用しない。DB や保存先の追加はない。詳細は [実装記録](features/notification-quick-actions-implementation-status.md)。
+
+- ステータス: Phase 2〜4 の採用方針
+- 対象: Windows デスクトップアプリケーション（WinUI 3）と現在ユーザーの独立 Worker
 - 更新日: 2026-10-29
+
+**Phase 4 の追記:** 固定 Roaming / Local、Debug / Release の分離は維持する。Worker 専用設定は Roaming `worker-settings.json`、接続情報と単一起動ロックは Local `worker/`、構造化ログは Local `logs/ui.log` / `worker.log`（各2MiB・3世代）に置く。記事の永続待機と情報源状態は既存 DB の Migration で追加する。Web の更新・ファイル書込・削除は Worker、チャット保存は Desktop が所有し、DB の Migration・操作はプロセス間ロックで調整する。API 接続情報は現在ユーザーと SYSTEM の ACL に限定する。Ollama 操作ロックだけは同じユーザーの Debug / Release で共通とする。詳細と旧設定の初回取り込みは [Worker の実装・運用](features/background-worker.md) を正とする。以下の Phase 2 / 3 時点の処理配置・ログ形式は導入時の記録を含む。
 - 関連: `architecture.md`、`data-design.md`、`roadmap.md`、`features/ai-chat.md`
 
 ## 1. 目的と基本方針

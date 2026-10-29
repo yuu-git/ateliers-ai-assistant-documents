@@ -19,7 +19,7 @@ ateliers-ai-assistant/
     Ateliers.Ai.Assistant.Application/
     Ateliers.Ai.Assistant.Infrastructure/
     Ateliers.Ai.Assistant.Desktop/       # WinUI 3
-    Ateliers.Ai.Assistant.Worker/        # 後続
+    Ateliers.Ai.Assistant.Worker/        # Phase 4、API を同じホストに配置
     Ateliers.Ai.Assistant.Api/           # 必要時
   tests/
     Ateliers.Ai.Assistant.Core.Tests/
@@ -31,6 +31,8 @@ ateliers-dev/
 ```
 
 上記は構成案。初期段階は Core / Application / Infrastructure / Desktop とテストを中心にし、空の Feature プロジェクトや Host を先に量産しない。
+
+Phase 4 では Worker を追加した。Application の `Worker/` と `Logging/` に契約・ユースケース、Infrastructure の `Worker/` と保存アダプターに HTTP クライアント・排他・設定・DB、Desktop に情報源とログの ViewModel・表示・起動登録、Worker に Kestrel と実行ループを置く。独立 Api プロジェクトは作らない。Desktop のビルド・発行・MSIX に Worker 出力を同梱する。検証は既存 `Ateliers.Ai.Assistant.Desktop.Tests` と `Verify-WorkerProcess.ps1` / `Verify-WorkerDisplay.ps1` に追加した。
 
 Phase 2 は既存4プロジェクト内に会話保存・設定・パス・診断ログを配置する。EF Core Migration は `src/Ateliers.Ai.Assistant.Infrastructure/Conversations/Migrations/`、ローカルの EF ツール定義はルートの `dotnet-tools.json` に置く。保存先はソース・実行ファイルの配下ではなく [保存方針](data-storage-policy.md) のユーザーデータ領域とし、DB・ログ・設定の実データは Git に含めない。
 

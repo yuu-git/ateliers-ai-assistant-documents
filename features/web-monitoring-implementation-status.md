@@ -4,9 +4,15 @@ title: Web 情報収集の実装状況と制約
 
 # Phase 3: Web 情報収集 MVP
 
+この文書は Phase 3 導入時の記録。Phase 4 で通常起動の Web 処理を独立 Worker に移し、複数情報源・自動巡回・永続待機処理を追加した。現在の動作は [Worker の実装・運用](background-worker.md) を参照する。
+
+通知 UI の現在の並び順は初回取得日時の降順。既読・ブックマーク・タグの永続化、条件適用後100件の検索、全通知の未読集計は [通知管理の実装状況](notification-management-implementation-status.md) を参照する。以下の公開日時順・操作配置は Phase 3 当時の記録とする。
+
 確認日: 2026-10-29。既存4プロジェクト内へ追加し、新規プロジェクト・NuGet 依存は追加していない。
 
 ## 操作
+
+現在の UI では [通知一覧のクイック操作](notification-quick-actions-implementation-status.md) も利用できる。単体削除の確認省略は Roaming 設定へ保存し、一括削除の確認には適用しない。以下の操作手順は導入時の記録。
 
 1. 「Web 情報収集」を開き、公開 HTTP(S) の RSS / Atom URL を1件入力する。
 2. 要約モデルを選択する。チャットの選択とは独立し、選択だけではロードしない。

@@ -7,8 +7,8 @@ title: アーキテクチャ
 ## 採用方針
 
 - **UI**: WinUI 3 + XAML + MVVM（決定）。Blazor は将来必要になれば別 UI として追加可能。
-- **常駐**: .NET Worker Service を Windows Service として運用（Phase 4 で導入。Phase 3 の手動収集は Desktop 内で実行）。
-- **プロセス間通信**: localhost HTTP API、必要なら SignalR（候補）。
+- **常駐**: Phase 4 は現在ユーザーの独立 Worker プロセス。Windows Service は採用しない。UI 終了後も巡回し、サインイン時起動は明示 opt-in。
+- **プロセス間通信**: 認証付き loopback HTTP API。UI は約5秒のポーリングで状態を更新する。
 - **保存**: Phase 2 の保存済み会話は SQLite + EF Core。Markdown 原文・表示状態・下書きと画像 BLOB を保存する。将来の情報収集結果の Markdown ファイル出力は別責務とする。
 - **AI**: Ollama と既存 C# 通信コード。Vision 対応モデルは画面監視段階で検証。
 - **開発環境**: Aspire は必須としない。複数プロセスの開発時起動・観測が必要になれば検討。
@@ -21,9 +21,9 @@ title: アーキテクチャ
   - 画面キャプチャ (将来)
   - スピーカー再生 (将来)
             |
-      localhost API / events
+      認証付き localhost API
             |
-[Worker + API Host / Windows Service]
+[Worker + API Host / ユーザーセッション]
   - Web 巡回・スケジューリング
   - 差分検知・AI 解析・通知生成
   - データ永続化・Markdown 出力
@@ -33,7 +33,7 @@ title: アーキテクチャ
      [Markdown files]
 ```
 
-Windows Service は非対話セッションで動くため、デスクトップ画面の取得や対話的な音声再生を担当させない。UI を閉じても画面監視・音声再生を続ける必要が出た場合は、ログイン中ユーザーの **Desktop Agent** を独立プロセス化するか、ウィンドウを閉じても常駐する Desktop ホストを設ける。Windows Service だけではユーザーセッションの機能を代替できない。
+Phase 4 の Worker はユーザーセッション内で動き、サインアウト中の動作は保証しない。画面監視・音声再生は未実装であり、将来の配置は実装時に検討する。詳細は [Worker の実装・運用](features/background-worker.md) を参照する。
 
 ## 論理的な責務
 
@@ -55,9 +55,13 @@ Phase 2 の永続化は Application の `IConversationStore`、`IUserSettingsSto
 
 ## 共通処理と固有処理
 
-Phase 3 の `WebCollectionService` は `IFeedSource`、`IWebMonitoringStore`、`IArticleMarkdownWriter` と共通モデル調停を呼ぶ。Infrastructure の `RssFeedSource` / `SqliteWebMonitoringStore` / `ArticleMarkdownWriter` が取得・永続化・ファイルを担当する。`WebMonitoringViewModel` は設定・進捗・一覧・キャンセルに集中する。会話保存と Web 保存は同じ DB ファイル単位のプロセス内ゲートを共有し、Migration の競合を防ぐ。
+Phase 4 後の UI 整理では、通知閲覧と設定表示を Desktop のコントロールへ分離する。情報源別の通知表示は既存 DB に保存された取得元を `ArticleNotification.FeedSourceUrl` として応答へ含め、記事 URL の `SourceUrl` と区別する。新しい Migration や収集・要約処理の変更は行わない。詳細は [UI 整理の実装状況](ui-design/implementation-status.md) を参照する。
 
-Phase 3 は `ChatModelSession` に `IModelWorkCoordinator` を追加し、収集全体をチャット・モデル停止・選択変更と直列化する。収集に使用したモデルも追跡し、終了時の限定解放に含める。以下の図の Worker は将来の配置であり、今回追加していない。並行利用の参照数管理は未導入。詳細は [Phase 3 実装状況](features/web-monitoring-implementation-status.md) を参照。
+続く通知管理の追加改修では `INotificationManagement` と Worker API を追加し、既読・ブックマーク・タグ用の Migration を適用した。Web の状態変更は引き続き Worker 側の SQLite ストアへ集約し、Desktop は API 結果を表示する。日付グループ・選択・Markdown は Desktop の表示責務とする。ナビゲーションの固定領域は設定画面と同じ Worker ViewModel・コマンド・約5秒のポーリングを共有し、追加の監視ループを作らない。[通知管理の境界・API・移行](features/notification-management-implementation-status.md) を参照する。
+
+Phase 3 の `WebCollectionService` は手動収集の実装として残す。通常起動の Phase 4 は Application の `WorkerCoordinator` が取得と AI を別ループで実行する。Infrastructure の `RssFeedSource` / `SqliteWebMonitoringStore` / `ArticleMarkdownWriter` は再利用し、要約処理は `ArticleSummary` に共通化する。Desktop の Web 用 ViewModel は `IWorkerClient` 経由で操作し、Web の DB 更新・Markdown 書込は Worker に集約する。会話保存と Web 保存は DB 単位のプロセス間ファイルゲートを共有し、Migration の競合も防ぐ。
+
+Phase 4 は `IModelUseGate` を UI と Worker のモデル利用に導入し、同一ユーザーの Ollama 操作をプロセス間で調整する。Worker 自動ロード・解放の方針と Desktop のチャット管理は別責務とする。利用元を識別できない外部アプリとの共有判定や参照数管理は未導入。
 
 ```text
 [RSS/API/Web] ----> [取得・差分検出] ----┐

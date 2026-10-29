@@ -6,11 +6,15 @@ title: データとメッセージの設計
 
 ## 保存方針
 
+通知の単体削除確認は既存の Roaming `settings.json` の `ConfirmSingleArticleDeletion`（既定 true）へ統合する。削除成功後に確認省略を保存し、設定保存失敗では前の確認方針を維持する。DB・Migration・Worker API への追加はない。[クイック操作](features/notification-quick-actions-implementation-status.md) を参照する。
+
 Phase 2 の採用方針は [アプリケーションデータ保存方針](data-storage-policy.md) を正とする。小容量のユーザー設定は Roaming の JSON、明示保存した会話は Local の SQLite / EF Core、診断ログは Local のローテーションファイルに分ける。設定を SQLite に格納する方針ではない。
 
 Phase 3 の実行履歴・記事入力と処理段階・通知は SQLite に保存する。生成 Markdown は通常ファイルとし、DB に Local 基点の相対パスを記録する。音声・動画は将来機能とする。
 
 ## Phase 2 の会話スキーマ
+
+Phase 4 は記事に `Processing` / `RetryAfterTicks`、DB に `WorkerSourceStates`（情報源 ID と状態 JSON）を追加する。永続待機は既存記事の未完了段階から判定し、最新10件の取得範囲とは分離する。情報源削除でも記事と URL 単位の重複判定を残す。Roaming の版付き `worker-settings.json` に設定を保存し、Web 更新は Worker が担当する。DB と Migration の排他はプロセス間で共通化する。詳細は [Worker のデータ・復旧](features/background-worker.md#データ復旧) を参照。
 
 | テーブル | 主な情報 | 関連・制約 |
 | --- | --- | --- |
@@ -35,6 +39,14 @@ Migration `20261028204923_WebMonitoring` は会話テーブルを変更せず、
 | WebNotifications | ArticleId、CreatedTicks | ArticleId が主キーかつ WebArticles への外部キー。記事ごと最大1件 |
 
 Markdown 出力後に保存パス・Notified・通知行を同じ DB トランザクションで確定する。ファイルと DB をまたぐ失敗は、安定した内部 ID のファイル名と通知一意制約によって冪等に再試行する。詳細は [実装状況](features/web-monitoring-implementation-status.md) を参照。
+
+### Phase 4 後の通知管理スキーマ
+
+Migration `20261029100645_NotificationReadingAndTags` で `WebArticles.ReadAtTicks`（nullable、UTC ticks）、`IsBookmarked`（初期 false）、`WebTags`（Id/Name/NormalizedName 一意）、`WebArticleTags`（ArticleId/TagId 複合主キー・外部キー）を追加した。既存の `FetchedTicks` を初回取得日時として表示し、公開日時・通知確定日時とは区別する。
+
+既存通知は承認済み方針に従い未読・ブックマーク OFF・タグなしへ移行する。要約・記事入力・初回取得日時は変更しない。通知確定済み記事だけを全件集計し、未読／ブックマーク／タグ検索は DB 条件適用後の最新100件とする。「すべて・タグなし」は全体最新100件を先に適用する。
+
+記事削除で通知・タグ関連をカスケード削除し、共有／孤立タグ定義は再利用用に残す。タグは Trim＋NFC、最大64 UTF-16 コード単位、内部空白保持、英字大小同一・全半角区別。Web 更新の所有者は Worker のままで、既存のプロセス間 DB ゲートを利用する。移行と Down 時のメタデータ消失、索引・API・確認結果は [通知管理の実装状況](features/notification-management-implementation-status.md) を参照する。
 
 以降は将来の構想を含む概念案である。
 

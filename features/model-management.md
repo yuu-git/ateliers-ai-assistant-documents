@@ -4,6 +4,8 @@ title: Ollama モデル管理（Phase 1 追加）
 
 # Ollama モデル管理
 
+Phase 4 は Desktop のチャット管理を維持し、Worker の自動ロード・解放とプロセス間モデルゲートを追加した。Worker 使用中の UI 操作・終了ではモデルを競合して停止しない。現在の共有制約と保持時間は [Worker のモデル利用](background-worker.md#モデル利用) を参照する。以下は各導入時点の説明を含む。
+
 Phase 3 の追加: `IModelWorkCoordinator` により手動 Web 収集全体を既存チャット・モデル操作と直列化する。収集中は記事間も含めモデルを停止・変更できない。収集で使用したモデルも追跡して通常終了時の限定解放に含める。並行利用の参照数管理は導入しない。以下の Phase 1 の記述は導入時の背景であり、現在の詳細は [Web 収集の実装状況](web-monitoring-implementation-status.md) を参照する。
 
 Phase 2 前の MVP として、Desktop が単一チャット用モデルのライフサイクルを管理する。Windows Service、SQLite、モデルのダウンロード・削除・更新、Ollama サーバープロセスの起動・停止は対象外。

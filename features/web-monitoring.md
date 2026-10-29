@@ -4,7 +4,13 @@ title: Web 情報収集
 
 # Web 情報収集
 
+**Phase 4:** 複数 RSS / Atom 情報源と自動巡回はユーザーセッションの独立 Worker に実装済み。現在の設定・復旧・制約は [Worker の実装・運用](background-worker.md) を参照する。以下の Phase 3 の記述は導入時の範囲を示す。
+
+Phase 4 後の追加改修で、初回取得日による通知のグループ化、既読・未読、ブックマーク、手動タグ、ナビゲーション下部の Worker／AI 操作を実装した。[通知管理の実装状況](notification-management-implementation-status.md) に操作・検索範囲・移行・API を記録する。「すべて・タグなし」は全体最新100件内の情報源絞込を維持し、未読／ブックマーク／タグは DB 全通知へ条件を適用した最新100件を取得する。未読件数は全表示対象通知から集計する。
+
 ## 目的
+
+通知一覧からの ☆／★ と単体削除、削除確認の設定、メタデータ末尾の未読表示は [クイック操作の実装状況](notification-quick-actions-implementation-status.md) を参照する。DB・Worker API・検索範囲は変更せず、単体削除は既存の記事削除サービスを使う。
 
 興味のあるニュース、ソフトウェアのリリースノート、Factorio MOD 更新情報を自動・手動で収集し、変更点を AI が要約して Markdown と通知フィードに残す。
 

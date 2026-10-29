@@ -67,12 +67,15 @@ WinUI 3 のテンプレート作成と最初の起動確認は Visual Studio で
 
 ## Phase 4: 常駐・自動巡回
 
+**追加改修:** [通知管理・グローバル操作](features/notification-management-implementation-status.md) を実装。既読・ブックマーク・手動タグ、初回取得日のグループ、全通知の未読集計と条件適用後100件の検索、ナビゲーション固定領域を追加した。移行・API・検証結果はリンク先を参照する。
 
-- Worker / Windows Service、localhost API、UI との通信。
+- 現在ユーザーの独立 Worker、認証付き localhost API、UI との通信。Windows Service は採用しない。
 - 情報源設定、巡回周期、自動 ON/OFF、手動実行。
 - 失敗時の扱いと再起動後の復旧。
 
-**完了条件:** UI ウィンドウを閉じても PC 起動中は定期巡回が続く。
+**完了条件:** サインイン中は UI ウィンドウを閉じても定期巡回が続く。
+
+**実施状況:** Worker 分離、複数情報源、変更可能な巡回周期（初期60分・最短5分）と次回予定、永続 AI 待機処理、モデル方針、opt-in のサインイン時起動、アプリ内ログを実装。Debug / Release の各62シナリオ、隔離した実プロセスと実 WinUI の UI 終了後巡回を確認。OS の実サインイン・スリープ復帰は利用者環境での最終確認を残す。詳細は [実装・運用と確認手順](features/background-worker.md)。
 
 ## Phase 5: 情報源拡張
 

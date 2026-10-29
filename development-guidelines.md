@@ -4,6 +4,12 @@ title: 開発・テスト方針
 
 # 開発・テスト方針
 
+## Phase 4 の確認
+
+Worker は Desktop と同じ構成でビルドし、ASP.NET Core Runtime 8（x64）を用意する。通常の UI は Web データを書き込まず、Worker の認証 API を利用する。設定・DB・エンドポイント・起動登録は Debug / Release を分離し、通常データを使った破壊的テストや自動的な起動登録は行わない。
+
+`WorkerTests.cs`、`Verify-WorkerProcess.ps1`、`Verify-WorkerDisplay.ps1` は固有の一時領域・偽サービスで実行する。AI 停止と RSS 継続、待機記事の復旧、API 拒否、UI 終了後巡回、Worker 停止時のログを確認する。実サインイン・スリープ復帰と実 Ollama の最終確認手順は [Worker 運用文書](features/background-worker.md#確認と残る制約) を参照し、自動検証結果と区別して報告する。
+
 ## 基本方針
 
 - 単一アプリケーションリポジトリ、単一ソリューション、複数 .NET プロジェクト。

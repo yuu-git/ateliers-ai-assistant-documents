@@ -12,7 +12,7 @@ title: プロジェクト概要と要件
 
 - 利用者は本人のみ。外部公開やマルチユーザー対応は当面不要。
 - Windows PC 1 台で利用する。
-- PC 起動中は UI のウィンドウを閉じても定期巡回を続ける。
+- サインイン中は UI のウィンドウを閉じても定期巡回を続ける。サインアウト中・スリープ中の動作は保証しない。
 - Web UI とネイティブ UI のデザイン統一は要件にしない。
 - ソースは一つのアプリケーションリポジトリ内の複数 .NET プロジェクトで管理する。自作 NuGet の配布・更新運用は当面行わない。
 - ドキュメントは別リポジトリに Markdown を中心に保管する。
@@ -36,6 +36,10 @@ title: プロジェクト概要と要件
 | F-13 | 画像1枚の貼り付け・プレビュー・削除、画像付き会話、メモリ内の画像保持 | Phase 1 追加（Phase 2 前） |
 | F-14 | 必要な会話の明示保存・再開・自動追記保存・スレッド削除。原文・画像・下書きを保持 | Phase 2 |
 | F-15 | Roaming 設定、Local の履歴 DB・診断ログ、固定保存先の表示・Explorer 起動 | Phase 2 |
+| F-16 | 独立 Worker、認証付き localhost API、情報源管理、周期変更・次回予定、AI 一時停止と永続待機、opt-in 起動、ログ画面 | Phase 4 |
+| F-17 | 初回取得日での通知グループ化、既読・未読と全通知集計、ブックマーク・手動タグ、固定 Worker／AI 操作 | Phase 4 後の追加改修 |
+
+F-17 の検索範囲、既存データの未読移行、タグ規則、API と確認結果は [通知管理の実装状況](features/notification-management-implementation-status.md) を参照する。既存のチャット・モデル管理・ログ・取得と要約の責務は維持する。
 
 会話一覧は AI チャット画面の内部に置く。新しい会話はメモリ上で開始し、利用者が保存するまで DB に記録しない。保存・破棄・キャンセルの確認と保存失敗時のメモリ維持を含む。詳細は [保存方針](data-storage-policy.md) と [Phase 2 指示](ai-implementation/phase2-codex-implementation-instructions.md) を参照する。
 
@@ -43,7 +47,7 @@ Debug / Release の設定・DB・画像・ログ等は分離し、設定画面�
 
 ## 将来の拡張候補（未確定）
 
-Phase 3 では F-03〜F-07 のうち RSS / Atom 1件の手動取得、永続重複判定、簡潔な日本語要約、Markdown 保存、巡回履歴・通知フィードを実装した。定期巡回・分類・重要度判定・情報源追加は引き続き後続とする。詳細と制約は [Web 情報収集の実装状況](features/web-monitoring-implementation-status.md) を参照する。
+Phase 3 では RSS / Atom の取得、永続重複判定、日本語要約、Markdown 保存、巡回履歴・通知フィードを実装し、Phase 4 で複数 RSS / Atom 情報源と定期巡回を Worker に移した。分類・重要度判定・RSS 以外の情報源追加は後続とする。現在の動作は [Worker の実装・運用](features/background-worker.md)、導入時の背景は [Phase 3 実装状況](features/web-monitoring-implementation-status.md) を参照する。
 
 [AI 管理コンソール](features/ai-management-console-concept.md) として、自然言語から既存の設定・操作を呼び出す独立した画面を検討する。現行の AI チャットはモデル検証用として維持する。まず Web 情報収集などを通常 UI と Application Service から操作できるようにし、その後に有用性を検証する。
 
@@ -51,7 +55,7 @@ Phase 3 では F-03〜F-07 のうち RSS / Atom 1件の手動取得、永続重�
 
 ## 非機能要件
 
-モデルのライフサイクル管理は、現段階では Desktop の単一チャット用仕様とする。複数機能や Windows Service の導入時に停止条件・管理責務を見直す。詳細は [Ollama モデル管理](features/model-management.md) を参照。
+Desktop はチャットのモデル管理を維持し、Worker は自動ロード・解放の明示設定と共有モデルゲートで調整する。外部アプリの利用元識別は Ollama API では保証できない。詳細は [Worker のモデル利用](features/background-worker.md#モデル利用) を参照。
 
 - UI を閉じてもバックグラウンド巡回は継続。PC の電源断中の稼働は不要。
 - ローカルで完結する構成を基本とする。ただし情報収集にはインターネット接続が必要。
