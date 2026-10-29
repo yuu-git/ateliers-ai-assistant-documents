@@ -7,7 +7,7 @@ title: アーキテクチャ
 ## 採用方針
 
 - **UI**: WinUI 3 + XAML + MVVM（決定）。Blazor は将来必要になれば別 UI として追加可能。
-- **常駐**: .NET Worker Service を Windows Service として運用（情報収集の段階で導入）。
+- **常駐**: .NET Worker Service を Windows Service として運用（Phase 4 で導入。Phase 3 の手動収集は Desktop 内で実行）。
 - **プロセス間通信**: localhost HTTP API、必要なら SignalR（候補）。
 - **保存**: Phase 2 の保存済み会話は SQLite + EF Core。Markdown 原文・表示状態・下書きと画像 BLOB を保存する。将来の情報収集結果の Markdown ファイル出力は別責務とする。
 - **AI**: Ollama と既存 C# 通信コード。Vision 対応モデルは画面監視段階で検証。
@@ -54,6 +54,10 @@ Phase 2 の永続化は Application の `IConversationStore`、`IUserSettingsSto
 終了時は、生成の中止待ちと未保存内容の確認・保存を先に完了する。キャンセル時はウィンドウとメモリ内容を維持し、その後にだけ既存の期限付きモデル解放と終了を行う。EF Core のリフレクション・Migration を保持するため、Phase 2 の Release は trimming を無効にする。
 
 ## 共通処理と固有処理
+
+Phase 3 の `WebCollectionService` は `IFeedSource`、`IWebMonitoringStore`、`IArticleMarkdownWriter` と共通モデル調停を呼ぶ。Infrastructure の `RssFeedSource` / `SqliteWebMonitoringStore` / `ArticleMarkdownWriter` が取得・永続化・ファイルを担当する。`WebMonitoringViewModel` は設定・進捗・一覧・キャンセルに集中する。会話保存と Web 保存は同じ DB ファイル単位のプロセス内ゲートを共有し、Migration の競合を防ぐ。
+
+Phase 3 は `ChatModelSession` に `IModelWorkCoordinator` を追加し、収集全体をチャット・モデル停止・選択変更と直列化する。収集に使用したモデルも追跡し、終了時の限定解放に含める。以下の図の Worker は将来の配置であり、今回追加していない。並行利用の参照数管理は未導入。詳細は [Phase 3 実装状況](features/web-monitoring-implementation-status.md) を参照。
 
 ```text
 [RSS/API/Web] ----> [取得・差分検出] ----┐

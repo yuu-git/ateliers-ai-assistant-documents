@@ -46,7 +46,7 @@ WinUI 3 のテンプレート作成と最初の起動確認は Visual Studio で
 - 通知・メッセージの共通表示に必要な DTO/契約を整理。
 - 固定保存先、Roaming JSON 設定、Local の制限付き診断ログ、設定画面の保存先表示・Explorer 起動、テストを拡充。
 
-**完了条件:** 明示保存した会話を再起動後に画像・下書きを含めて復元できる。未保存会話は DB に作らず、離脱・終了の保存確認と保存失敗を適切に扱う。詳細は [保存方針](data-storage-policy.md) と [実装指示](phase2-codex-implementation-instructions.md) を参照する。
+**完了条件:** 明示保存した会話を再起動後に画像・下書きを含めて復元できる。未保存会話は DB に作らず、離脱・終了の保存確認と保存失敗を適切に扱う。詳細は [保存方針](data-storage-policy.md) と [実装指示](ai-implementation/phase2-codex-implementation-instructions.md) を参照する。
 
 **実施状況（2026-10-29）:** 実装・開発環境での検証完了。実 SQLite / EF Core Migration、画像 BLOB と下書き、固定保存先、モデル選択 JSON、制限付きログ、設定画面、最小通知 DTO を追加。Debug / Release の自動検証35シナリオと実画面の保存・終了・再起動・復元・削除を確認。Markdown・貼り付け104回と既存の実 Ollama モデル管理も回帰確認した。Release は合意に従い trimming 無効で発行。MSIX の保存先は Debug の一時開発パッケージで確認し、配布形態別の未検証範囲はアプリ README に記録する。
 
@@ -59,7 +59,14 @@ WinUI 3 のテンプレート作成と最初の起動確認は Visual Studio で
 
 **完了条件:** 2回実行しても同じ記事を無条件に再通知しない。
 
+**実施状況（2026-10-29）:** RSS 2.0 / Atom 1件の手動取得、永続重複キー、段階別再試行、Ollama 要約、UTF-8 Markdown、実行履歴・通知を実装。既存会話を保持する追加 Migration と共通モデル排他を導入した。Debug / Release の全47シナリオ、隔離した実 WinUI の2プロセスでの復元・重複防止・収集中終了を確認。実 RSS と実 Ollama の E2E は利用者環境で別途確認する。詳細は [実装状況](features/web-monitoring-implementation-status.md) を参照。
+
+**追加改修:** 通知の公開日時順と Markdown 全文表示、記事の複数選択・一括削除、削除後の新規再取得、最新10記事への対象制限を追加した。Debug / Release の全52シナリオと実削除ダイアログ・再取得・再起動を確認。非表示機能は導入しない。
+
+**完了確認（2026-10-29）:** 記事ごとの要約モデル表示まで追加し、Debug / Release の全53シナリオが成功。利用者による動作確認を受け、Phase 3 を完了とする。
+
 ## Phase 4: 常駐・自動巡回
+
 
 - Worker / Windows Service、localhost API、UI との通信。
 - 情報源設定、巡回周期、自動 ON/OFF、手動実行。

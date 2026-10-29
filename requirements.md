@@ -37,11 +37,13 @@ title: プロジェクト概要と要件
 | F-14 | 必要な会話の明示保存・再開・自動追記保存・スレッド削除。原文・画像・下書きを保持 | Phase 2 |
 | F-15 | Roaming 設定、Local の履歴 DB・診断ログ、固定保存先の表示・Explorer 起動 | Phase 2 |
 
-会話一覧は AI チャット画面の内部に置く。新しい会話はメモリ上で開始し、利用者が保存するまで DB に記録しない。保存・破棄・キャンセルの確認と保存失敗時のメモリ維持を含む。詳細は [保存方針](data-storage-policy.md) と [Phase 2 指示](phase2-codex-implementation-instructions.md) を参照する。
+会話一覧は AI チャット画面の内部に置く。新しい会話はメモリ上で開始し、利用者が保存するまで DB に記録しない。保存・破棄・キャンセルの確認と保存失敗時のメモリ維持を含む。詳細は [保存方針](data-storage-policy.md) と [Phase 2 指示](ai-implementation/phase2-codex-implementation-instructions.md) を参照する。
 
 Debug / Release の設定・DB・画像・ログ等は分離し、設定画面に使用中のデータ環境を表示する。既存データは Release 用として維持し、Debug への自動移行・共有は行わない。
 
 ## 将来の拡張候補（未確定）
+
+Phase 3 では F-03〜F-07 のうち RSS / Atom 1件の手動取得、永続重複判定、簡潔な日本語要約、Markdown 保存、巡回履歴・通知フィードを実装した。定期巡回・分類・重要度判定・情報源追加は引き続き後続とする。詳細と制約は [Web 情報収集の実装状況](features/web-monitoring-implementation-status.md) を参照する。
 
 [AI 管理コンソール](features/ai-management-console-concept.md) として、自然言語から既存の設定・操作を呼び出す独立した画面を検討する。現行の AI チャットはモデル検証用として維持する。まず Web 情報収集などを通常 UI と Application Service から操作できるようにし、その後に有用性を検証する。
 

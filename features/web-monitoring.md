@@ -44,4 +44,6 @@ title: Web 情報収集
 
 ## MVP
 
-最初は RSS 1 件を手動取得し、前回との重複を検出し、新着を Ollama で要約して Markdown に保存する。次に SQLite、通知、スケジュール、情報源追加へ進む。
+Phase 3 は RSS / Atom 1件の手動取得、SQLite による重複検出、Ollama 要約、Markdown 保存、巡回履歴・通知フィードまでを Desktop 内に実装する。スケジュール・Windows Service・複数情報源は Phase 4 以降とする。
+
+実装済みの動作・再試行・安全性・制約・確認方法は [Phase 3 実装状況](web-monitoring-implementation-status.md) を参照する。上の情報源拡張・周期・分類・構造化結果は将来計画を含み、すべてが今回の実装対象ではない。

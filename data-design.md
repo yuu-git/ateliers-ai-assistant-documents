@@ -8,7 +8,7 @@ title: データとメッセージの設計
 
 Phase 2 の採用方針は [アプリケーションデータ保存方針](data-storage-policy.md) を正とする。小容量のユーザー設定は Roaming の JSON、明示保存した会話は Local の SQLite / EF Core、診断ログは Local のローテーションファイルに分ける。設定を SQLite に格納する方針ではない。
 
-将来の実行履歴・記事メタデータ・通知は SQLite の候補とする。生成 Markdown と音声・動画は通常のファイルとして保存し、DB に相対パスや参照情報を記録する。これらの将来データは Phase 2 では実装しない。
+Phase 3 の実行履歴・記事入力と処理段階・通知は SQLite に保存する。生成 Markdown は通常ファイルとし、DB に Local 基点の相対パスを記録する。音声・動画は将来機能とする。
 
 ## Phase 2 の会話スキーマ
 
@@ -23,6 +23,20 @@ Phase 2 の採用方針は [アプリケーションデータ保存方針](data-
 `IncludedInHistory` は完了した送受信だけ true にする。表示状態の文字列から履歴を推測せず、復元後も中止・失敗ターンを送信対象から除外する。スキーマ変更は EF Core Migration で管理し、通常起動で DB を削除・再作成しない。
 
 ## 概念モデル（案）
+
+### Phase 3 の追加スキーマ
+
+Migration `20261028204923_WebMonitoring` は会話テーブルを変更せず、以下を追加する。
+
+| テーブル | 主な情報 | 制約・目的 |
+| --- | --- | --- |
+| WebArticles | Id、Key、Source、Payload、FetchedTicks、Summary、Model、MarkdownPath、Notified、Error | Key が一意。入力 JSON と成功済み要約を保持し、段階別に再試行 |
+| WebCollectionRuns | Id、StartedTicks、Payload | 情報源・モデル・開始終了・状態・件数・エラーを持つ実行 DTO の JSON。StartedTicks でソート |
+| WebNotifications | ArticleId、CreatedTicks | ArticleId が主キーかつ WebArticles への外部キー。記事ごと最大1件 |
+
+Markdown 出力後に保存パス・Notified・通知行を同じ DB トランザクションで確定する。ファイルと DB をまたぐ失敗は、安定した内部 ID のファイル名と通知一意制約によって冪等に再試行する。詳細は [実装状況](features/web-monitoring-implementation-status.md) を参照。
+
+以降は将来の構想を含む概念案である。
 
 | 概念 | 主な属性 |
 | --- | --- |

@@ -37,7 +37,8 @@ title: 未決定事項と技術検証
 
 ## Web 収集
 
-- 最初の RSS 情報源と Markdown のファイル名・配置規則。
+- Phase 3 は利用者が指定する RSS / Atom 1件を対象とし、Markdown は Local の `web-monitoring/articles/{内部GUID:N}.md` に確定した。利用する情報源そのものは利用者が選ぶ。
+- 更新記事の再要約・再通知、フィード URL 変更時の同一性、複数プロセスの収集調停、通知の既読とデータ保持期間。
 - 取得本文・差分スナップショットの保存期間。
 - スケジューラは `BackgroundService` / `PeriodicTimer` から始めるか、Quartz.NET 等を導入するか。
 - 破壊的変更判定の根拠表示と信頼度の表現。

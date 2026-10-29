@@ -38,6 +38,8 @@ Phase 2 は既存4プロジェクト内に会話保存・設定・パス・診�
 
 ## 文書管理
 
+Phase 3 は既存の Application / Infrastructure に `WebMonitoring/`、Desktop に Web 用 ViewModel・参照先起動・隔離診断を追加する。Migration は会話と同じ場所で管理し、新規プロジェクトは追加しない。生成 Markdown はソースやドキュメントリポジトリへ出力せず、Local データ配下に置く。
+
 - 原本は `ateliers-ai-assistant-documents` のみ。コピーを二重管理しない。
 - 通常の文書は `.md`、Docusaurus 固有の機能が必要な場合だけ `.mdx`。
 - GitHub / VS Code でも読める相対リンクを基本とする。

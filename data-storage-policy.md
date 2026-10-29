@@ -28,7 +28,8 @@ Ateliers AI Assistant の設定、会話履歴、ログ等の保存場所を統�
 | アプリケーションログ | `%LOCALAPPDATA%` | `Ateliers-Dev\Ai-Assistant\logs\` | Phase 2 初期値は各2 MiB・最大3ファイル |
 | キャッシュ | `%LOCALAPPDATA%` | `Ateliers-Dev\Ai-Assistant\cache\` | 再生成可能なデータ |
 | 一時ファイル | `%LOCALAPPDATA%` | `Ateliers-Dev\Ai-Assistant\temp\` | 必要時のみ作成し適宜削除 |
-| 将来の情報収集データ | `%LOCALAPPDATA%` | `Ateliers-Dev\Ai-Assistant\data\` | 詳細は該当フェーズで確定 |
+| Web 収集状態・実行履歴・通知 | `%LOCALAPPDATA%` | 既存の `data\assistant.db` | Phase 3 の追加 Migration |
+| 記事要約 Markdown | `%LOCALAPPDATA%` | `Ateliers-Dev\Ai-Assistant\web-monitoring\articles\{記事GUID:N}.md` | Phase 3。UTF-8、相対パスを DB に記録 |
 
 想定構成:
 
@@ -113,6 +114,10 @@ Ateliers AI Assistant の設定、会話履歴、ログ等の保存場所を統�
 Phase 2 の Roaming 設定は最後に選択したモデルだけとする。起動時に存在するモデルなら選択を復元し、自動ロードしない。不正な設定ファイルは既定値で継続し、自動上書きを止める。利用者がファイルを修復・削除した後に設定画面の再読み込みで復帰できる。
 
 ## 7. セキュリティとプライバシー
+
+Phase 3 の手動削除では、確認した1件または複数件の記事と関連通知・重複判定情報・保存 Markdown を削除する。実行履歴と未選択の記事は残す。削除済み記事が次回取得の最新10件に含まれれば新規扱いで登録し直す。非表示・自動削除は行わない。記事単位の失敗を表示し、ファイルと DB の確定の間の障害は再削除で回復する。詳細は [Web 収集の実装状況](features/web-monitoring-implementation-status.md) を参照する。
+
+Phase 3 は Roaming 設定にフィード URL と要約モデルを追加する。既存の最終チャットモデルも同じ保存キューで維持する。記事の入力・処理段階・巡回履歴・通知は会話と同じ SQLite に追加し、Markdown は Local の `web-monitoring\articles\` に内部 GUID の名前で出力する。Debug / Release 分離、固定保存先、遅延作成、診断ログの内容制限は引き継ぐ。記事・通知・成果物の自動削除は今回行わない。
 
 - ローカル保存でも、会話には個人情報や画面画像が含まれ得る。不要な会話を保存しない設計を優先する。
 - 設定・ログに API キー、認証トークン、画像 Base64、会話全文を無条件に出力しない。
