@@ -38,6 +38,7 @@ title: プロジェクト概要と要件
 | F-15 | Roaming 設定、Local の履歴 DB・診断ログ、固定保存先の表示・Explorer 起動 | Phase 2 |
 | F-16 | 独立 Worker、認証付き localhost API、情報源管理、周期変更・次回予定、AI 一時停止と永続待機、opt-in 起動、ログ画面 | Phase 4 |
 | F-17 | 初回取得日での通知グループ化、既読・未読と全通知集計、ブックマーク・手動タグ、固定 Worker／AI 操作 | Phase 4 後の追加改修 |
+| F-18 | RSS / Atom を維持した情報源拡張基盤、リポジトリ単位の GitHub Releases 監視と既存巡回・要約・記事管理への連携 | Phase 5（合意範囲・未実装） |
 
 F-17 の検索範囲、既存データの未読移行、タグ規則、API と確認結果は [通知管理の実装状況](features/notification-management-implementation-status.md) を参照する。既存のチャット・モデル管理・ログ・取得と要約の責務は維持する。
 
@@ -45,11 +46,19 @@ F-17 の検索範囲、既存データの未読移行、タグ規則、API と�
 
 Debug / Release の設定・DB・画像・ログ等は分離し、設定画面に使用中のデータ環境を表示する。既存データは Release 用として維持し、Debug への自動移行・共有は行わない。
 
+## Phase 5 の合意範囲（未実装）
+
+[Phase 5](roadmap.md#phase-5-情報源拡張基盤github-releases-対応) は、情報源ごとの取得・重複／差分判定を整理し、最初の API 型情報源として GitHub Releases を追加する。既存 Worker の定期巡回・手動実行、Ollama 要約、通知、未読・既読、ブックマーク、タグ、削除との整合性を維持する。同じリリースを繰り返し取得しても無条件に新規通知を作らないことを完了条件とする。
+
+Factorio MOD Portal、任意の一般 Web 監視、関心に基づくニュース検索・推薦、AI による情報源の自動発見、AI 管理コンソール、MCP / Tool Calling の新規実装は含めない。将来の汎用プラグイン基盤や過剰な抽象化も必須としない。詳細実装設計は次の依頼で扱う。
+
 ## 将来の拡張候補（未確定）
 
-Phase 3 では RSS / Atom の取得、永続重複判定、日本語要約、Markdown 保存、巡回履歴・通知フィードを実装し、Phase 4 で複数 RSS / Atom 情報源と定期巡回を Worker に移した。分類・重要度判定・RSS 以外の情報源追加は後続とする。現在の動作は [Worker の実装・運用](features/background-worker.md)、導入時の背景は [Phase 3 実装状況](features/web-monitoring-implementation-status.md) を参照する。
+Phase 3 では RSS / Atom の取得、永続重複判定、日本語要約、Markdown 保存、巡回履歴・通知フィードを実装し、Phase 4 で複数 RSS / Atom 情報源と定期巡回を Worker に移した。RSS 以外の情報源は Phase 5 の GitHub Releases と、その後の候補を区別する。分類・重要度判定は引き続き後続候補。現在の動作は [Worker の実装・運用](features/background-worker.md)、導入時の背景は [Phase 3 実装状況](features/web-monitoring-implementation-status.md) を参照する。
 
 [AI 管理コンソール](features/ai-management-console-concept.md) として、自然言語から既存の設定・操作を呼び出す独立した画面を検討する。現行の AI チャットはモデル検証用として維持する。まず Web 情報収集などを通常 UI と Application Service から操作できるようにし、その後に有用性を検証する。
+
+その他、指定ページの HTML 取得・対象領域抽出・ハッシュ等で変更を検出する「汎用 Web 監視」、関心テーマから検索・候補抽出・関連度評価・重複整理・要約・重要度別通知を行う「AI 情報収集・推薦」を将来構想として分離する。後者はキーワード／メタデータによる一次選別とローカル LLM による二次評価を組み合わせる方向も検討する。Factorio MOD Portal は GitHub Releases より優先度の低い後続候補として残す。いずれも実装方式・順序・フェーズ番号は未確定で、既存 Phase 6・7 は維持する。
 
 実装時期・画面構成・公開操作・承認ルール・MCP の採否は未定であり、現行フェーズの要件や完了条件には追加しない。LLM が操作を提案しても、入力検証・認可・実行結果の確定はアプリケーション側の責務とする。
 
