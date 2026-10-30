@@ -40,6 +40,10 @@ Phase 2 は既存4プロジェクト内に会話保存・設定・パス・診�
 
 ## 文書管理
 
+Temp 管理の横断改善も既存プロジェクト内に置く。Application `Storage/TempContracts.cs` と `CapturedImageStore.cs`、Infrastructure `Storage/Temp/`、Desktop／Worker の起動・終了接続とテストを追加し、新規プロジェクトや DB は増やさない。
+
+Phase 6 は新規プロジェクトを追加せず、Application の `ScreenAnalysis` に画像取得ポート・単発解析サービス、Desktop の `Capture` に Windows 固有処理を配置する。`ScreenAnalysisViewModel` と `Controls/ScreenAnalysisView` は既存のチャット／Markdown 表示を再利用する。既存 Worker・Infrastructure の収集処理や DB の構成は変えない。
+
 Phase 3 は既存の Application / Infrastructure に `WebMonitoring/`、Desktop に Web 用 ViewModel・参照先起動・隔離診断を追加する。Migration は会話と同じ場所で管理し、新規プロジェクトは追加しない。生成 Markdown はソースやドキュメントリポジトリへ出力せず、Local データ配下に置く。
 
 - 原本は `ateliers-ai-assistant-documents` のみ。コピーを二重管理しない。

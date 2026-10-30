@@ -1,5 +1,7 @@
 # Ateliers AI Assistant — アプリケーションデータ保存方針
 
+**Phase 6 完了後の Temp 管理（2026-10-30）:** 既存の Local `temp/` と Debug／Release 分離を使い、`v1/<所有者GUID>/` ごとの OS ロック、用途別一時ファイル、環境全体の容量予約、個別清掃・異常終了残存回収を追加した。メモリ内画像は一括使用権で保護し、Phase 6 のキャプチャを自動的にファイルへ保存しない。詳細な上限・確定方式・削除対象は [Temp 管理](features/temp-management.md) を参照する。永続会話・記事・ログ・ブラウザーの保存領域は今回の清掃対象に含めない。以下の過去フェーズの履歴・採用方針は維持する。
+
 **通知クイック操作の追記:** 単体記事削除の確認設定 `ConfirmSingleArticleDeletion` は既存の Roaming `settings.json` に保存する（既定 true、旧 JSON も true）。Debug/Release 分離は維持する。削除成功後にのみ省略設定を確定し、一括削除の確認には適用しない。DB や保存先の追加はない。詳細は [実装記録](features/notification-quick-actions-implementation-status.md)。
 
 - ステータス: Phase 2〜4 の採用方針

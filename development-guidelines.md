@@ -22,6 +22,8 @@ Worker は Desktop と同じ構成でビルドし、ASP.NET Core Runtime 8（x64
 
 ## テスト
 
+Temp 管理の `TempManagementTests.cs` は検証専用の AppData 基点・時計・ファイル操作境界を使う。`--temp-tests` で専用6件だけを実行でき、全体テストにも含む。容量予約・世代・期限・一括使用権、I/O 障害、junction・範囲外操作、実子プロセスの強制終了と残存回収を扱う。`Verify-WorkerProcess.ps1` は隔離した残存ファイルを用意し、実 Worker の起動時回収を確認する。通常ユーザーの Temp を試験目的で一括削除しない。[採用方式と制限](features/temp-management.md) を参照する。
+
 Phase 5 の `GitHubReleaseTests.cs` は HTTP スタブと隔離 SQLite／JSON で、対象選別、Release ID、編集重複、削除再取得、制限・障害、再起動復元、設定互換・入力保持を検証する。通常テストは実 GitHub API に依存しない。`Verify-WorkerDisplay.ps1 -GitHub` は偽 HTTP と偽 Ollama を使った独立 Worker・実 WinUI 検証。`--github-repository owner/repository` は明示実行した場合だけ公開 API を1回読み、保存・Ollama操作は行わない。[実装・確認手順](features/github-releases-implementation-status.md#確認方法) を参照する。
 
 - Domain: 差分判定、重複判定、状態遷移などを純粋な単体テストで検証。

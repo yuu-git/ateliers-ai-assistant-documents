@@ -15,10 +15,12 @@ title: アーキテクチャ
 
 ## 実行時の境界
 
+Phase 6 完了後の横断改善として、Application の `Storage` に時系列画像・使用権と Temp 契約、Infrastructure の `Storage/Temp` にファイル管理を追加した。UI／Worker の Host が起動・終了清掃へ接続する。所有者はプロセス起動ごとに分離し、プロセスをまたぐデータ共有は実装しない。FS の安全性は `ITempFileSystem` に分離し、既存のパス・診断ログを利用する。詳細は [Temp 管理](features/temp-management.md) を参照する。
+
 ```text
 [WinUI 3 Desktop / ユーザーセッション]
   - チャット・通知・設定 UI
-  - 画面キャプチャ (将来)
+  - 手動画面キャプチャ・Vision 解析 UI (Phase 6)
   - スピーカー再生 (将来)
             |
       認証付き localhost API
@@ -33,11 +35,13 @@ title: アーキテクチャ
      [Markdown files]
 ```
 
-Phase 4 の Worker はユーザーセッション内で動き、サインアウト中の動作は保証しない。図の画面キャプチャ・音声再生は未実装の候補配置であり、確定した配置を示さない。詳細は [Worker の実装・運用](features/background-worker.md) を参照する。
+Phase 4 の Worker はユーザーセッション内で動き、サインアウト中の動作は保証しない。Phase 6 の手動キャプチャ・画像解析は Desktop 側へ実装し、既存 Ollama 接続を直接使う。図の音声再生は未実装の候補配置。詳細は [Worker の実装・運用](features/background-worker.md) を参照する。
 
-## Phase 6・7 の境界（計画）
+## Phase 6 の実装と Phase 7 の境界
 
-Phase 6 は利用者が対象を選択する手動キャプチャ・プレビュー・Vision 解析・結果表示に限定する。キャプチャと表示はユーザーセッション側で扱い、既存 Ollama 画像入力を再利用する方向とする。UI、キャプチャ、解析の責務を分けるが、API や新規プロジェクトなどの詳細設計は着手時に決める。
+Phase 6 は利用者が対象を選択する手動キャプチャ・プレビュー・Vision 解析・結果表示に限定する。Desktop の `WindowsScreenCaptureService` が WGC／標準 Picker／D3D を扱い、Application の `IScreenCaptureService` で UI 非依存の画像データを渡す。`ScreenAnalysisService` は既存 `IChatService` と `IModelWorkCoordinator`、`ChatModelSession` の排他・ライフサイクルを再利用する。`ScreenAnalysisViewModel` が操作状態を保持し、`ScreenAnalysisView` が同じ PNG をプレビューする。新規プロジェクト・DB 変更はない。
+
+解析は画像・プロンプト一回分だけを送り、会話履歴や DB へ追加しない。結果表示は既存 `ChatTranscriptView` を再利用する。AI 一時停止中・Worker 状態不明時は解析しない方針を採用し、排他取得後にも API で確認する。UI の既存状態更新で停止・未接続を検知した場合も中止を通知する。詳細な制約と未確認事項は [画面監視](features/screen-monitoring.md) を参照する。
 
 Phase 7 は継続キャプチャ、解析ジョブの蓄積を防ぐ制御、時系列コメント表示、明示的な開始・停止・再開を暫定範囲とする。既存 AI 一時停止・資源制御との整合性を保つ。既存 Worker または別 Capture Agent を利用するか、UI を閉じても継続するか、ロック・最小化・対象消失時の扱いは Phase 6 の検証後に判断し、現行 Worker へ担当を確定しない。Web 巡回の UI 終了後継続という既存仕様とは分けて扱う。
 
