@@ -4,7 +4,11 @@ title: Phase 4 常駐 Worker の実装・運用
 
 # Phase 4 常駐 Worker の実装・運用
 
-**Phase 5 の追加:** [GitHub Releases](github-releases-implementation-status.md) を既存の取得・AIループへ接続した。現在の UI／Worker 実装版は **5.0.0**。既存版は停止してから更新後に開始する。ユーザーセッション、起動登録、モデル方針、保存先分離は維持し、GitHub のレート制限時は API 全体を待機させて RSS と保存済み記事の要約は継続する。以下の Phase 4 導入記録の版番号は当時のもの。
+**MVP 完了後の追加:** 現在の実装版は **7.1.0**。監視は最大4件の定義を既存 Worker が所有し、取得・Vision を全体1件へ直列化する。監視ID API、全監視のモデル保護と自動解放、トレイ全停止、旧設定移行を追加した。一般の設定 API で監視一覧を直接上書きせず、監視別Revisionで変更を調整する。既存の Web 取得・要約・認証・保存仕様は維持する。[複数監視の実装と検証](multi-screen-monitoring.md) を現在仕様とし、以下の版番号は各導入時の記録として読む。
+
+**Phase 7 の追加:** 現在の UI／Worker 実装版は **7.0.0**。既存 Worker が独立 STA・標準 Picker・WGC・トレイを持ち、継続画面監視と Vision コメントを担当する。Web 取得・要約ループ、起動登録、データ保存仕様は維持する。監視では AI 一時停止中にキャプチャも止めるが、RSS 等の情報取得は続ける。対象・コメント・画像は永続化せず、Worker 再起動時は監視停止。操作とモデル共有・環境別制約は [Phase 7 実装記録](phase7-implementation-status.md) を参照する。以下の版番号は過去フェーズ導入時の記録。
+
+**Phase 5 の追加:** [GitHub Releases](github-releases-implementation-status.md) を既存の取得・AIループへ接続した。導入時の UI／Worker 実装版は **5.0.0**。既存版は停止してから更新後に開始する。ユーザーセッション、起動登録、モデル方針、保存先分離は維持し、GitHub のレート制限時は API 全体を待機させて RSS と保存済み記事の要約は継続する。以下の Phase 4 導入記録の版番号は当時のもの。
 
 Phase 4 では Web 情報収集を現在ユーザーの独立 Worker に移した。Windows Service は導入していない。サインアウト中・PC の電源 OFF 中は動作せず、スリープ中の巡回も保証しない。チャットは引き続き Desktop が担当する。
 

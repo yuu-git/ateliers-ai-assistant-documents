@@ -15,6 +15,8 @@ title: アーキテクチャ
 
 ## 実行時の境界
 
+MVP 完了後の複数監視は、既存 Worker の `MultiScreenMonitorService` が不変 MonitorId ごとの対象・状態・取消・コメントと全体1件の実行枠を所有する。既存 STA／トレイは共有し、`CaptureWindowHost` の取得スコープを監視ごとに分離する。モデル保護は全監視集合、画像ストアと本文容量は Worker 全体で共有する。Desktop は一覧と選択監視の詳細を取得し、画像は IPC で渡さない。専用 Agent・追加 DB は導入しない。移行・ID API・公平性・実処理終了待ちは [複数画面監視基盤](features/multi-screen-monitoring.md) を現在仕様とする。以下の Phase 7 単一監視は導入時の採用経緯を含む。
+
 Phase 6 完了後の横断改善として、Application の `Storage` に時系列画像・使用権と Temp 契約、Infrastructure の `Storage/Temp` にファイル管理を追加した。UI／Worker の Host が起動・終了清掃へ接続する。所有者はプロセス起動ごとに分離し、プロセスをまたぐデータ共有は実装しない。FS の安全性は `ITempFileSystem` に分離し、既存のパス・診断ログを利用する。詳細は [Temp 管理](features/temp-management.md) を参照する。
 
 ```text
@@ -29,6 +31,7 @@ Phase 6 完了後の横断改善として、Application の `Storage` に時系�
   - Web 巡回・スケジューリング
   - 差分検知・AI 解析・通知生成
   - データ永続化・Markdown 出力
+  - STA・標準 Picker・WGC による継続画面監視、Vision コメント、トレイ (Phase 7)
             |                  |
          [SQLite]           [Ollama]
             |
@@ -43,7 +46,9 @@ Phase 6 は利用者が対象を選択する手動キャプチャ・プレビュ
 
 解析は画像・プロンプト一回分だけを送り、会話履歴や DB へ追加しない。結果表示は既存 `ChatTranscriptView` を再利用する。AI 一時停止中・Worker 状態不明時は解析しない方針を採用し、排他取得後にも API で確認する。UI の既存状態更新で停止・未接続を検知した場合も中止を通知する。詳細な制約と未確認事項は [画面監視](features/screen-monitoring.md) を参照する。
 
-Phase 7 は継続キャプチャ、解析ジョブの蓄積を防ぐ制御、時系列コメント表示、明示的な開始・停止・再開を暫定範囲とする。既存 AI 一時停止・資源制御との整合性を保つ。既存 Worker または別 Capture Agent を利用するか、UI を閉じても継続するか、ロック・最小化・対象消失時の扱いは Phase 6 の検証後に判断し、現行 Worker へ担当を確定しない。Web 巡回の UI 終了後継続という既存仕様とは分けて扱う。
+Phase 7 は既存 Worker が独立 STA・所有者 HWND・標準 Picker・WGC 対象・トレイを持ち、取得と現在画像1枚の Vision を実行する。Desktop 終了後も継続し、認証 API の約5秒ポーリングで状態とメモリ内コメントを再表示する。専用 Agent は追加しない。`ScreenMonitorService` は Application のユースケース、Windows 固有処理は新しい `Ateliers.Ai.Assistant.Windows` プロジェクトへ分離し、Phase 6 の Desktop アダプターも同じ取得・正規化を使う。Phase 6 導入時の配置を移動するもので、手動操作の仕様は維持する。
+
+モデル排他は従来どおり共有する。自動ロード・自動アンロードは既存 Worker 設定に従い、監視中モデルの保持期限を要約で短縮しない。Desktop の自動解放前には稼働中 Worker の監視モデルを確認する。監視は解析中の周期をスキップし、AI 一時停止では取得も中止する。RSS 等の取得継続とは区別する。ロック・対象消失・Worker 終了で安全に止め、Worker 再起動は停止状態とする。画像は登録・一枚リース・解放後削除とし、画像・コメントの永続化や IPC 画像転送は行わない。設定・検証と制約は [Phase 7 実装記録](features/phase7-implementation-status.md) を正とする。
 
 音声出力は両 Phase の対象外で、Web 情報収集と画面監視の双方から利用できる時期未定の基盤候補とする。MCP 動画生成連携も旧 Phase 7 から時期未定へ移す。初期 MVP の到達点は [ロードマップ](roadmap.md#マイルストーン-ateliers-ai-assistant-初期-mvp) を参照する。
 

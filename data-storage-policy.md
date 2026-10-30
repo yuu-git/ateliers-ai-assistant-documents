@@ -1,5 +1,9 @@
 # Ateliers AI Assistant — アプリケーションデータ保存方針
 
+**MVP 完了後の複数監視:** Roaming `worker-settings.json` の `screenMonitors` に不変ID・名前・モデル・周期・プロンプト・定義Revisionを最大4件保存する。旧単一 `screenMonitor` は初回だけ原子的に移行し、空一覧から旧定義を復活させない。対象・稼働状態・画像・コメントは保存せず、Worker 再起動では全停止・対象再選択とする。本文は全監視で合計1 MiB、監視ごと最大200件。既存256 KiBの設定ファイル上限を保存前にも確認する。Debug／Release 分離・DB・記事・会話保存仕様は維持する。[移行と保持範囲](features/multi-screen-monitoring.md) を参照する。
+
+**Phase 7 の追記（2026-10-30）:** 既存 Roaming `worker-settings.json` の `screenMonitor` に監視モデル・周期・プロンプトだけを保存する。対象・HWND・稼働状態・画像・コメントは保存しない。コメントは Worker メモリ内の最新200件／本文概算1 MiB、1件65536文字まで。同じ Worker への UI 再接続で再表示できるが、Worker 再起動では空・監視停止から始める。画像はメモリストアへ登録し、一枚リースの解析後に解放・削除する。Temp ディスク書込、画像 IPC、DB Migration は追加しない。詳細は [Phase 7 実装記録](features/phase7-implementation-status.md) を参照する。
+
 **Phase 6 完了後の Temp 管理（2026-10-30）:** 既存の Local `temp/` と Debug／Release 分離を使い、`v1/<所有者GUID>/` ごとの OS ロック、用途別一時ファイル、環境全体の容量予約、個別清掃・異常終了残存回収を追加した。メモリ内画像は一括使用権で保護し、Phase 6 のキャプチャを自動的にファイルへ保存しない。詳細な上限・確定方式・削除対象は [Temp 管理](features/temp-management.md) を参照する。永続会話・記事・ログ・ブラウザーの保存領域は今回の清掃対象に含めない。以下の過去フェーズの履歴・採用方針は維持する。
 
 **通知クイック操作の追記:** 単体記事削除の確認設定 `ConfirmSingleArticleDeletion` は既存の Roaming `settings.json` に保存する（既定 true、旧 JSON も true）。Debug/Release 分離は維持する。削除成功後にのみ省略設定を確定し、一括削除の確認には適用しない。DB や保存先の追加はない。詳細は [実装記録](features/notification-quick-actions-implementation-status.md)。

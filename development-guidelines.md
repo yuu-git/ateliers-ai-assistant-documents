@@ -22,6 +22,10 @@ Worker は Desktop と同じ構成でビルドし、ASP.NET Core Runtime 8（x64
 
 ## テスト
 
+MVP 後の `MultiScreenMonitorTests.cs` は4件上限、共有本文容量、独立した定義・モデル・周期、飢餓防止、取消を無視する呼出しの実終了待ち、移行失敗の原本保全等を扱う。`Verify-MultiScreenMonitor.ps1` は実 WGC・標準 Picker・実 MainWindow・導入済み2モデルを使い、同一対象と別対象、UI 閉鎖後継続・復元、個別削除、共有モデル・全停止・再起動を検証する。`Verify-MonitorApplicationTargets.ps1` の Chrome／タスクマネージャーは実取得と偽推論を使い、実画面を Ollama に送信しない。詳細は [複数監視の検証](features/multi-screen-monitoring.md#検証と結果) を参照する。
+
+Phase 7 の `ScreenMonitorTests.cs` は周期スキップ・AI 停止時の取得中止・新規画像での再開・モデル方針・自動解放保護・保持期限・UI 再接続・入力保持・古い更新破棄を検証する。`Verify-ScreenMonitor.ps1 -Model gemma3:4b` は隔離した実 Worker・実 Desktop・標準 Picker と実 Vision を使い、Desktop 終了後の60秒周期継続と再表示、トレイ停止、ロック通知の模擬、対象消失、再起動停止を確認する。一般のディスプレイ画像は Vision に送らず、検証用ウィンドウ画像だけを送る。通常データ・起動登録を変更しない。ゲーム・実ロック・MSIX・長時間運用の手動確認とは分けて記録する。[採用方式と確認結果](features/phase7-implementation-status.md) を参照する。
+
 Temp 管理の `TempManagementTests.cs` は検証専用の AppData 基点・時計・ファイル操作境界を使う。`--temp-tests` で専用6件だけを実行でき、全体テストにも含む。容量予約・世代・期限・一括使用権、I/O 障害、junction・範囲外操作、実子プロセスの強制終了と残存回収を扱う。`Verify-WorkerProcess.ps1` は隔離した残存ファイルを用意し、実 Worker の起動時回収を確認する。通常ユーザーの Temp を試験目的で一括削除しない。[採用方式と制限](features/temp-management.md) を参照する。
 
 Phase 5 の `GitHubReleaseTests.cs` は HTTP スタブと隔離 SQLite／JSON で、対象選別、Release ID、編集重複、削除再取得、制限・障害、再起動復元、設定互換・入力保持を検証する。通常テストは実 GitHub API に依存しない。`Verify-WorkerDisplay.ps1 -GitHub` は偽 HTTP と偽 Ollama を使った独立 Worker・実 WinUI 検証。`--github-repository owner/repository` は明示実行した場合だけ公開 API を1回読み、保存・Ollama操作は行わない。[実装・確認手順](features/github-releases-implementation-status.md#確認方法) を参照する。

@@ -4,7 +4,11 @@ title: アプリ専用 Temp 管理
 
 # アプリ専用 Temp 管理
 
+**複数監視での共有:** MVP 完了後の [複数画面監視](multi-screen-monitoring.md) でも `CapturedImageStore` は Worker 全体で一つとし、監視ごとの別ストアによって128 MiB上限を倍増させない。各監視のセッション／対象IDとリースを分離し、上限超過で他の使用中画像を削除しない。現在画像1枚の解析後に解放・削除し、ディスク Temp の上限・所有者契約も変更しない。
+
 2026-10-30。Phase 6 完了後、Phase 7 に向けた横断改善として追加した。[実装指示](../ai-implementation/temp-management-codex-instructions.md) と利用者が承認した設計を基にする。新フェーズは追加せず、定期監視・画像差分・音声・複数画像の Ollama 送信は実装しない。
+
+**Phase 7 の利用開始:** [継続画面監視](phase7-implementation-status.md) は、この基盤の `CapturedImageStore` へ現在画像をセッション／対象 ID・実取得時刻で登録し、一枚リースで解析後、解放・削除する。定期監視を Temp 基盤自体へ追加したものではなく、複数画像同時送信・画像差分・ファイル退避は導入しない。以下の Temp 管理導入時の上限・安全性・検証記録は維持する。
 
 ## 既存機能への影響
 

@@ -8,7 +8,7 @@ Windows 上で動作する、自分専用のローカル AI アシスタント�
 
 初期の目的は **WinUI 3 から Ollama と会話できるチャットアプリ**を完成させること。将来的には Web 情報収集、画面監視、音声通知、Markdown 生成、既存 MCP ツールによる動画生成まで拡張する。
 
-**現在の計画（2026-10-30）:** Phase 6 の手動キャプチャ・Vision 解析まで利用者確認を受けて完了。Phase 6〜7 を支える横断改善として、アプリ専用 Temp 管理と複数時点画像のメモリ保持基盤を追加した。Phase 7 の継続画面監視・AI コメントは暫定計画とする。Phase 7 完了をアプリケーションの初期 MVP 到達点とし、情報収集と画面アシスタントの二本柱を満たす。音声・MCP 動画生成・AI 管理コンソール等は時期未定。範囲と未確認事項は [ロードマップ](roadmap.md) を参照する。
+**現在の状況（2026-10-30）:** Phase 7 まで利用者の動作確認を受けて完了し、情報収集と画面アシスタントの二本柱を備えた初期 MVP に到達した。その後の基盤拡張として [複数画面監視](features/multi-screen-monitoring.md) を追加し、既存 Worker 内で最大4件の独立監視を全体1件ずつ解析する。ゲームや配布形態などの環境別確認は完了判定と分けて残す。音声・MCP 動画生成・AI 管理コンソール等は時期未定。[ロードマップ](roadmap.md) と [Phase 7 導入記録](features/phase7-implementation-status.md) も参照する。
 
 ## ドキュメント一覧
 
@@ -27,6 +27,8 @@ Windows 上で動作する、自分専用のローカル AI アシスタント�
 - [通知一覧のクイック操作・単体削除と確認設定](features/notification-quick-actions-implementation-status.md)
 - [通知の閲覧終了と既読化・手動未読指定の優先](features/notification-reading-behavior.md)
 - [画面監視・ゲームアシスタント](features/screen-monitoring.md)
+- [Phase 7 の導入記録](features/phase7-implementation-status.md)
+- [MVP 完了後の複数画面監視基盤](features/multi-screen-monitoring.md)
 - [アプリ専用 Temp 管理・複数時点画像の使用権](features/temp-management.md)
 - [音声・動画生成連携](features/media-integration.md)
 - [AI 管理コンソール構想（未実装・時期未定）](features/ai-management-console-concept.md)
