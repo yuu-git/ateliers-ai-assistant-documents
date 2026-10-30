@@ -66,6 +66,8 @@ Migration `20261029100645_NotificationReadingAndTags` で `WebArticles.ReadAtTic
 
 ## チャットと通知
 
+Phase 5 は DB スキーマと既存記事・通知 ID を変更しない。`SourceConfiguration.Kind` と `IncludePrereleases` を既存 Worker 設定 JSON へ、`SourceState.GitHubRetryAt` を `WorkerSourceStates` の JSON へ、任意の `GitHubReleaseMetadata` を `WebArticles.Payload` へ保持する。旧設定は RSS / Atom、旧記事はリリースメタデータなしとして読む。取得タグは手動タグテーブルへ自動登録しない。新規 Migration はない。[採用契約と互換性](features/github-releases-implementation-status.md#契約保存既存データ) を参照する。
+
 共通の時系列表示コンポーネントは検討できるが、チャットと通知のドメインモデルを最初から同一化しない。チャットは会話文脈と Role、通知は発生源・重要度・既読・参照先を持つ。表示用 DTO で統合できる。
 
 ## AI の構造化結果例

@@ -38,7 +38,7 @@ title: プロジェクト概要と要件
 | F-15 | Roaming 設定、Local の履歴 DB・診断ログ、固定保存先の表示・Explorer 起動 | Phase 2 |
 | F-16 | 独立 Worker、認証付き localhost API、情報源管理、周期変更・次回予定、AI 一時停止と永続待機、opt-in 起動、ログ画面 | Phase 4 |
 | F-17 | 初回取得日での通知グループ化、既読・未読と全通知集計、ブックマーク・手動タグ、固定 Worker／AI 操作 | Phase 4 後の追加改修 |
-| F-18 | RSS / Atom を維持した情報源拡張基盤、リポジトリ単位の GitHub Releases 監視と既存巡回・要約・記事管理への連携 | Phase 5（合意範囲・未実装） |
+| F-18 | RSS / Atom を維持した情報源拡張基盤、リポジトリ単位の GitHub Releases 監視と既存巡回・要約・記事管理への連携 | Phase 5（実装済み） |
 
 F-17 の検索範囲、既存データの未読移行、タグ規則、API と確認結果は [通知管理の実装状況](features/notification-management-implementation-status.md) を参照する。既存のチャット・モデル管理・ログ・取得と要約の責務は維持する。
 
@@ -46,11 +46,13 @@ F-17 の検索範囲、既存データの未読移行、タグ規則、API と�
 
 Debug / Release の設定・DB・画像・ログ等は分離し、設定画面に使用中のデータ環境を表示する。既存データは Release 用として維持し、Debug への自動移行・共有は行わない。
 
-## Phase 5 の合意範囲（未実装）
+## Phase 5 の採用仕様
 
 [Phase 5](roadmap.md#phase-5-情報源拡張基盤github-releases-対応) は、情報源ごとの取得・重複／差分判定を整理し、最初の API 型情報源として GitHub Releases を追加する。既存 Worker の定期巡回・手動実行、Ollama 要約、通知、未読・既読、ブックマーク、タグ、削除との整合性を維持する。同じリリースを繰り返し取得しても無条件に新規通知を作らないことを完了条件とする。
 
-Factorio MOD Portal、任意の一般 Web 監視、関心に基づくニュース検索・推薦、AI による情報源の自動発見、AI 管理コンソール、MCP / Tool Calling の新規実装は含めない。将来の汎用プラグイン基盤や過剰な抽象化も必須としない。詳細実装設計は次の依頼で扱う。
+公開・認証なし、プレリリースは情報源ごとの opt-in、draft は除外。毎回先頭100件内の対象最大10件を取得し、同一リリースの編集は既存記事へ反映しない。GitHub のレート制限中も RSS と保存済み記事の要約を継続する。設定・保存互換と検証結果は [Phase 5 実装状況](features/github-releases-implementation-status.md) を参照する。
+
+Factorio MOD Portal、任意の一般 Web 監視、関心に基づくニュース検索・推薦、AI による情報源の自動発見、AI 管理コンソール、MCP / Tool Calling の新規実装は含めない。将来の汎用プラグイン基盤や過剰な抽象化も導入しない。
 
 ## 将来の拡張候補（未確定）
 

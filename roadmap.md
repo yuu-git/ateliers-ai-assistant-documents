@@ -79,7 +79,7 @@ WinUI 3 のテンプレート作成と最初の起動確認は Visual Studio で
 
 ## Phase 5: 情報源拡張基盤・GitHub Releases 対応
 
-**範囲の決定（2026-10-30）:** 従来の「GitHub Releases、一般 Web、Factorio MOD Portal などを追加」から、情報源拡張基盤と GitHub Releases に範囲を絞る。以下は次フェーズの合意範囲であり、実装済みを意味しない。詳細実装設計は別途行う。
+**範囲の決定（2026-10-30）:** 従来の「GitHub Releases、一般 Web、Factorio MOD Portal などを追加」から、情報源拡張基盤と GitHub Releases に範囲を絞った。調査・計画の承認後に実装し、採用仕様・制限は [Phase 5 実装状況](features/github-releases-implementation-status.md) に記録する。
 
 **目的:** 既存の RSS / Atom に加えて、API 型の情報源を扱える共通の情報収集基盤を整備する。
 
@@ -104,7 +104,9 @@ WinUI 3 のテンプレート作成と最初の起動確認は Visual Studio で
 - AI 管理コンソール。
 - MCP / Tool Calling の新規実装。
 
-これらの将来構想のための過剰な抽象化や汎用プラグイン基盤は、Phase 5 の必須要件にしない。取得・差分判定の整理は RSS / Atom と GitHub Releases の実際の必要範囲に留める。認証、取得範囲、同一リリースの更新時の扱いなどは [未決定事項](open-questions.md#phase-5-の詳細設計で確認) を参照する。
+これらの将来構想のための過剰な抽象化や汎用プラグイン基盤は、Phase 5 の必須要件にしない。取得・差分判定の整理は RSS / Atom と GitHub Releases の実際の必要範囲に留める。認証、取得範囲、同一リリースの更新時の扱いなどの承認済み方針は [確認済み事項](open-questions.md#phase-5-で確認済み) を参照する。
+
+**実施状況（2026-10-30）:** 共通取得ポート、公開・認証なし GitHub Releases、種別とプレリリース入力、先頭100件内の対象最大10件、編集済み Release ID の重複抑止、GitHub 全体のレート制限待機・復元、既存要約・通知・記事管理への連携を実装。DB Migration と既存記事・通知 ID の変更はない。検証結果・操作手順・残る制約は [実装記録](features/github-releases-implementation-status.md) を参照する。利用者による実運用での最終確認は別途行う。
 
 ## Phase 6: 画面監視と音声
 

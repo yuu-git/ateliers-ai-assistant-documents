@@ -17,13 +17,13 @@ Phase 4 後の追加改修で、初回取得日による通知のグループ化
 ## 情報源
 
 - RSS / Atom（実装済み）: ニュース、技術ブログ。Phase 5 でも既存の収集機能を維持する。
-- GitHub Releases（Phase 5 の合意範囲・未実装）: 最初の API 型情報源として、リポジトリ単位で監視対象を管理し、リリース ID 等で重複・差分を判定する。
+- GitHub Releases（Phase 5 実装済み）: 最初の API 型情報源として、公開リポジトリ単位で監視対象を管理し、Release ID で既存記事との重複を判定する。同一リリースの編集は反映しない。
 - 一般 Web ページ（時期未定）: RSS / Atom や専用 API がない指定ページを対象に、HTML 取得・対象領域抽出・ハッシュ等で変更を検出する汎用 Web 監視を検討する。
 - Factorio MOD Portal 等の固有 API（時期未定）: MOD のバージョン・互換性・更新内容。GitHub Releases より優先度を下げた後続候補として残す。
 
 Phase 5 は情報源ごとに異なる取得・差分判定を整理し、既存 Worker の定期巡回・手動実行と Ollama 要約・通知・記事管理へ接続する。同じリリースを繰り返し取得しても無条件に新規通知を生成しないことを完了条件とする。既存の未読・既読、ブックマーク、手動タグ、削除と整合させる。
 
-情報源ごとの ID、更新日時、ETag、Last-Modified、ハッシュなど利用可能な手段を検討する。`IContentSource` は契約名の例であり確定 API ではない。具体的な共通化は RSS / Atom と GitHub Releases に必要な範囲とし、汎用プラグイン基盤・MCP / Tool Calling・AI 管理コンソールを Phase 5 の必須要件にしない。認証・取得範囲・同一リリースの更新時の扱いなどは [未決定事項](../open-questions.md#phase-5-の詳細設計で確認) に残す。
+Phase 5 では `IContentSource` と2種類の取得アダプターを使い、汎用プラグイン基盤は導入しない。GitHub は認証なし、毎回先頭100件内の対象最大10件、プレリリース opt-in、draft 除外。ETag は削除後再取得・キャッシュとの整合を含め後続検討とする。採用仕様・API待機・操作・検証結果は [GitHub Releases 実装状況](github-releases-implementation-status.md)、承認事項は [確認済み事項](../open-questions.md#phase-5-で確認済み) を参照する。
 
 ## 関心テーマからの情報発見・推薦（将来構想）
 

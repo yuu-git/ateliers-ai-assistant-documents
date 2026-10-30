@@ -4,6 +4,8 @@ title: Phase 4 常駐 Worker の実装・運用
 
 # Phase 4 常駐 Worker の実装・運用
 
+**Phase 5 の追加:** [GitHub Releases](github-releases-implementation-status.md) を既存の取得・AIループへ接続した。現在の UI／Worker 実装版は **5.0.0**。既存版は停止してから更新後に開始する。ユーザーセッション、起動登録、モデル方針、保存先分離は維持し、GitHub のレート制限時は API 全体を待機させて RSS と保存済み記事の要約は継続する。以下の Phase 4 導入記録の版番号は当時のもの。
+
 Phase 4 では Web 情報収集を現在ユーザーの独立 Worker に移した。Windows Service は導入していない。サインアウト中・PC の電源 OFF 中は動作せず、スリープ中の巡回も保証しない。チャットは引き続き Desktop が担当する。
 
 Phase 4 後の [UI 整理](../ui-design/implementation-status.md) により、操作入口は「通知・情報収集」と設定の3カテゴリへ再配置した。通知 DTO の `SourceUrl` は元記事 URL、`FeedSourceUrl` は既存 DB の取得元フィード URL。続く [通知管理の追加改修](notification-management-implementation-status.md) で既読・ブックマーク・タグ用 API、日付表示、固定フッターを追加した。実装版 **4.1.0** への更新時は旧 Worker を明示停止して開始し直す。

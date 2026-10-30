@@ -22,6 +22,8 @@ Worker は Desktop と同じ構成でビルドし、ASP.NET Core Runtime 8（x64
 
 ## テスト
 
+Phase 5 の `GitHubReleaseTests.cs` は HTTP スタブと隔離 SQLite／JSON で、対象選別、Release ID、編集重複、削除再取得、制限・障害、再起動復元、設定互換・入力保持を検証する。通常テストは実 GitHub API に依存しない。`Verify-WorkerDisplay.ps1 -GitHub` は偽 HTTP と偽 Ollama を使った独立 Worker・実 WinUI 検証。`--github-repository owner/repository` は明示実行した場合だけ公開 API を1回読み、保存・Ollama操作は行わない。[実装・確認手順](features/github-releases-implementation-status.md#確認方法) を参照する。
+
 - Domain: 差分判定、重複判定、状態遷移などを純粋な単体テストで検証。
 - Application: 偽の取得サービス・LLM・永続化を用いてユースケースを検証。
 - Infrastructure: SQLite、HTTP、Ollama との統合テストを別途用意。

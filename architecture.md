@@ -75,11 +75,13 @@ Phase 4 は `IModelUseGate` を UI と Worker のモデル利用に導入し、�
 
 C# がスケジュール、HTTP 取得、記事 ID・ハッシュ比較、再試行、ファイル出力を担当する。LLM は意味理解、分類、要約、重要度の参考判定、コメント・通知文生成を担当する。LLM 出力は構造化・検証して保存し、原文と判断を混同しない。
 
-## Phase 5 の情報源拡張方針（合意範囲・未実装）
+## Phase 5 の情報源拡張
 
 RSS / Atom と GitHub Releases で異なる取得・重複／差分判定を扱い、既存 Worker の定期巡回・手動実行から共通の要約・通知・記事管理へ接続する。情報源固有の取得と識別の処理を分け、UI へ外部 API や DB 更新の詳細を持ち込まない。既存の未読・既読、ブックマーク、タグ、削除、保存先分離を維持する。
 
-具体的な契約・クラス・保存スキーマ・設定項目は詳細設計で検討し、今回の文書更新では確定しない。将来の汎用プラグイン基盤や MCP / Tool Calling を先に実装する要件にはしない。[Phase 5 の範囲](roadmap.md#phase-5-情報源拡張基盤github-releases-対応) と [未決定事項](open-questions.md#phase-5-の詳細設計で確認) を参照する。
+Application の `IContentSource` を取得境界にし、既存 `IFeedSource` は RSS の互換ポートとして継承する。Infrastructure の `ContentSourceRouter` が `RssFeedSource` と `GitHubReleasesSource` を振り分け、Worker が設定に基づき呼び出す。HTTP/JSON は Infrastructure に閉じ、既存の後段とユーザーセッション常駐を維持する。GitHub は30秒・8 MiBの上限と安全なエラー分類を持つ。
+
+種別・プレリリース設定は Worker 設定 JSON、API待機期限は既存状態 JSON、リリースメタデータは既存記事入力 JSON に追加する。DB Migration・通知 ID の変更はない。型の任意フィールドで旧 RSS 設定・記事を読み、UI／Worker の同版確認は維持する。将来の汎用プラグイン基盤や MCP / Tool Calling は追加しない。[Phase 5 の実装・制限](features/github-releases-implementation-status.md) と [確認済み事項](open-questions.md#phase-5-で確認済み) を参照する。
 
 汎用 Web 監視は指定ページの変更検出、AI 情報収集・推薦は関心テーマからの情報発見・選別、AI 管理コンソールは既存業務操作の自然言語による呼び出しとして、異なる責務の後続構想に分ける。推薦では一次選別とローカル LLM による二次評価の分担を検討するが、プロセス配置・連携・実装順序は未定。Factorio MOD Portal も後続の専用 API 型情報源候補とする。
 
