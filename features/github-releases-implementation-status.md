@@ -6,6 +6,8 @@ title: Phase 5 GitHub Releases の実装状況と制約
 
 2026-10-30。[実装指示](../ai-implementation/phase5-codex-implementation-instructions.md) に従い、調査計画の承認後に実装した。RSS / Atom を維持し、公開 GitHub Releases を同じ Worker の巡回・要約・通知・記事管理へ接続する。MCP / Tool Calling、一般 Web、Factorio、検索・推薦は追加していない。
 
+**完了確認（2026-10-30）:** 利用者による機能確認と、未読一覧で詳細が消える最終不具合の修正確認を受け、Phase 5 は完了とする。[通知の閲覧終了と既読化](notification-reading-behavior.md) に最終の動作と検証範囲を記録した。記事を閲覧中は未読を維持し、手動未読を優先する。行は枠・背景だけで強調する。以下の各79件は GitHub 追加時点の記録で、最終修正後は全80件、Debug／Release ビルドと実 WinUI の回帰検証に成功した。実 API＋実 Ollama の通し検証等の未確認事項は本書末尾のとおり残す。
+
 ## 操作・更新手順
 
 1. 更新前のアプリで旧 Worker を停止する。更新後の UI／Worker は実装版 **5.0.0**、プロトコル版は1。版不一致時は接続を拒否するため、旧アプリを利用できない場合はタスクマネージャーで自分の対象環境の Worker 実行ファイルを確認して終了する。Ollama サーバーは停止しない。
