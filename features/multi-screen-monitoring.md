@@ -124,6 +124,24 @@ Debug／Release の Desktop x64 ビルドは、ともに警告0・エラー0。�
 
 ## 残る制約
 
+### 2026-10-31: 監視対象 Picker が即時に閉じる不具合の修正
+
+単発解析は前面の Desktop ウィンドウから選択するが、継続監視は別プロセスの Worker の非表示所有者から選択する。従来は `SetForegroundWindow` の結果を確認せず、Desktop から前面表示の許可も渡していなかった。前回の API 単体実機試験は Worker の所有者を直接前面化していたため、通常 Desktop 操作でのこの経路を検証できていなかった。
+
+- `endpoint.json` に Worker の `ProcessId` を追加する。保存済み監視定義や DB は変更しない。
+- Desktop の対象選択要求直前に、同じ接続情報に含まれる Worker PID だけへ `AllowSetForegroundWindow` を呼ぶ。全プロセスへの許可や強制的な入力スレッド結合は行わない。
+- Win32 呼出しは Desktop の表示用アダプターに置き、API クライアントにはコールバックとして注入する。ViewModel は Windows API に依存させない。通常の状態取得・ポーリングでは許可しない。
+- Worker でも所有者の前面化を確認し、失敗時は前面に戻して再操作する案内を表示する。Picker 排他、実操作完了までの所有権、キャンセル時の旧対象保持は維持する。
+- PID を持たない旧 Worker に接続している場合、対象選択時に Worker 再起動を案内する。修正後は Desktop と Worker の両方を更新・再起動する。製品バージョン管理は既存の `Directory.Build.props`（0.7.0）を維持する。
+
+検証用 `--verify-monitor-picker <隔離ルート> <準備完了ファイル>` は通常 MainWindow・監視 ViewModel・製品の許可処理を使い、手動で対象選択ボタンを操作できる Debug 専用モード。旧試験の所有者直接前面化は使わず、実 Desktop ボタンから Picker の選択待ち維持・確定・2件目の表示・キャンセル・再表示を確認した。同じ専用ウィンドウを2件で選択し、それぞれ586×393の実 WGC 画像を取得できた。Worker の推論は偽物で、画像を Ollama へ送信・保存していない。
+
+追加の自動テストは、許可が HTTP 送信より前であること、現在の接続 PID のみに限定すること、Worker 再起動への追従、許可拒否・PID 欠落時に選択要求を送信しないことを確認する。Debug／Release とも全100件が通過し、Desktop x64 ビルドも両構成で警告0・エラー0。
+
+前面プロセスから別プロセスへの表示許可については、Microsoft の [SetForegroundWindow の制約と AllowSetForegroundWindow](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setforegroundwindow) に従う。
+
+### 環境・モデルに依存する制約
+
 登録4件は GPU メモリを保証する値ではない。複数の大きなモデルの常駐可否・退避は Ollama と端末に依存し、推論を直列化しても全モデルが同時に常駐する保証はない。モデルごとの認識精度、意味的な画像差分、録画、通知、音声、履歴の永続化は対象外。
 
 取消後の実行枠の解放は、アプリケーション側の取得・通信・推論タスクの実完了を基準とする。HTTP 接続が終了した後の Ollama 内部の GPU 処理終了までは、クライアント側から確認・保証できない。
